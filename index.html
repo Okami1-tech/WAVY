@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavy™ — Digital Receipt System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Paystack Inline -->
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+</head>
+<body>
+    <!-- LANDING PAGE — Minimalist, Powerful -->
+    <div class="container" id="landingPage">
+        <header class="header">
+            <h1 class="logo">Wavy<span class="gold">™</span></h1>
+            <p class="tagline">Digital receipts. Zero friction. Elite experience.</p>
+        </header>
+
+        <div class="hero">
+            <h2 class="title">Choose Your Role</h2>
+            <div class="role-cards">
+                <button class="role-card" id="merchantBtn" data-role="merchant">
+                    <div class="role-icon">💼</div>
+                    <h3 class="role-title">Merchant</h3>
+                    <p class="role-desc">Create, track, and share your receipts to customers</p>
+                    <div class="role-badge">Premium Ready</div>
+                </button>
+
+                <button class="role-card" id="customerBtn" data-role="customer">
+                    <div class="role-icon">👤</div>
+                    <h3 class="role-title">Customer</h3>
+                    <p class="role-desc">View receipts instantly — no login needed</p>
+                    <div class="role-badge">Zero Friction</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footnote">Wavy™ — By Okami Nalado</p>
+        </div>
+    </div>
+
+    <!-- MERCHANT DASHBOARD — Dark Luxury -->
+    <div class="container" id="merchantSection" style="display: none;">
+        <header class="header">
+            <h1 class="logo">Wavy<span class="gold">™</span></h1>
+            <button class="back-btn" id="backToLanding">← Back</button>
+        </header>
+
+        <div class="dashboard">
+            <!-- Auth Section -->
+            <div id="authSection" class="auth-container">
+                <div class="auth-tabs">
+                    <button class="tab-btn active" data-tab="login">Login</button>
+                    <button class="tab-btn" data-tab="signup">Sign Up</button>
+                </div>
+
+                <div class="auth-forms">
+                    <form id="loginForm" class="auth-form active">
+                        <input type="email" id="loginEmail" placeholder="Email Address" required>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                        <button type="submit" class="btn btn-primary">Enter Dashboard</button>
+                    </form>
+
+                    <form id="signupForm" class="auth-form" style="display: none;">
+                        <input type="text" id="signupName" placeholder="Full Name" required>
+                        <input type="email" id="signupEmail" placeholder="Email Address" required>
+                        <input type="password" id="signupPassword" placeholder="Password" required>
+                        <button type="submit" class="btn btn-primary">Create Elite Account</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dashboard (after login) -->
+            <div id="dashboard" style="display: none;">
+                <div class="dashboard-header">
+                    <h2>Welcome, <span id="merchantName"></span></h2>
+                    <div class="plan-badge">
+                        <span id="planTag">Free Plan</span>
+                        <button class="btn btn-gold" id="upgradeBtn">Upgrade to Premium</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Create New Receipt</h3>
+                    <form id="createReceiptForm">
+                        <div class="form-group">
+                            <label>Receipt Items</label>
+                            <textarea id="receiptItems" placeholder="Enter items, one per line…"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (₦)</label>
+                            <input type="number" id="receiptAmount" placeholder="0.00" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description (Optional)</label>
+                            <textarea id="receiptDescription" placeholder="Add context…"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Token</button>
+                    </form>
+                </div>
+
+                <!-- Token Display -->
+                <div id="receiptToken" class="card" style="display: none;">
+                    <h3>Receipt Token Generated</h3>
+                    <div class="token-display">
+                        <code id="tokenValue"></code>
+                        <button class="btn btn-copy" id="copyToken">Copy Token</button>
+                    </div>
+                    <p class="token-note">Share this token with your customer. They’ll access it instantly.</p>
+                </div>
+
+                <!-- Premium Features -->
+                <div id="receiptHistory" class="card" style="display: none;">
+                    <h3>Receipt History</h3>
+                    <div id="receiptList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOMER VIEW — Clean, Fast, Elegant -->
+    <div class="container" id="customerSection" style="display: none;">
+        <header class="header">
+            <h1 class="logo">Wavy<span class="gold">™</span></h1>
+            <button class="back-btn" id="customerBack">← Back</button>
+        </header>
+
+        <div class="customer-view">
+            <div class="card">
+                <h2>View Receipt</h2>
+                <p>Enter the 6-digit token provided by the merchant</p>
+                <form id="tokenForm">
+                    <input type="text" id="tokenInput" placeholder="XXXXXX" maxlength="6" inputmode="numeric" autocomplete="one-time-code" autofocus>
+                    <button type="submit" class="btn btn-primary">Access Receipt</button>
+                </form>
+            </div>
+
+            <!-- Receipt Display -->
+            <div id="receiptDisplay" class="receipt-card" style="display: none;">
+                <div class="receipt-header">
+                    <span class="receipt-token">Token: <span id="displayToken"></span></span>
+                    <span class="receipt-date" id="displayDate"></span>
+                </div>
+                <div class="receipt-body">
+                    <h3>Amount</h3>
+                    <div class="receipt-amount">₦<span id="displayAmount"></span></div>
+                    <h3>Items</h3>
+                    <div class="receipt-items" id="displayItems"></div>
+                    <div class="receipt-description" id="displayDescription"></div>
+                </div>
+                <button class="btn btn-gold" id="exportPdfBtn">Export as PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYSTACK MODAL — Luxury Modal Design -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closePaymentModal">&times;</span>
+            <div class="modal-header">
+                <h3>Upgrade to Premium</h3>
+                <div class="gold-star">★</div>
+            </div>
+            <p class="modal-desc">Unlock elite merchant tools:</p>
+            <ul class="modal-features">
+                <li>✅ Unlimited receipt history</li>
+                <li>✅ Sales analytics dashboard</li>
+                <li>✅ Export reports (CSV/PDF)</li>
+                <li>✅ Priority support</li>
+            </ul>
+            <div class="modal-price">
+                <span class="price-tag">₦5,000</span> / month
+            </div>
+            <button class="btn btn-gold" id="paystackBtn">Pay with Paystack</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
