@@ -7,14 +7,628 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- SUPABASE LIBRARY -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Paystack Inline -->
-    <script src="https://js.paystack.co/v2/inline.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    <link rel="stylesheet" href="https://js.paystack.co/v2/inline.js">
+    <style>
+        /* BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background: #0F0F0F;
+            color: #F8F8F8;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .container {
+            min-height: 100vh;
+            padding: 40px 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #F8F8F8;
+            letter-spacing: -0.5px;
+        }
+
+        .gold {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #A0A0A0;
+            margin-top: 8px;
+            font-weight: 300;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #4A90E2;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 40px;
+            color: #F8F8F8;
+            letter-spacing: -0.5px;
+        }
+
+        .role-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .role-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 144, 226, 0.15);
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(74, 144, 226, 0.2);
+            border-color: rgba(74, 144, 226, 0.3);
+        }
+
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .role-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #F8F8F8;
+        }
+
+        .role-desc {
+            color: #A0A0A0;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: rgba(74, 144, 226, 0.15);
+            color: #4A90E2;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footnote {
+            color: #777;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        /* AUTH SECTION */
+        .auth-container {
+            margin-bottom: 50px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            color: #A0A0A0;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: #F8F8F8;
+            border-bottom-color: #4A90E2;
+        }
+
+        .auth-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            color: #F8F8F8;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4A90E2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3a7bc8;
+            transform: translateY(-1px);
+        }
+
+        .btn-gold {
+            background: #D4AF37;
+            color: #1C1C1E;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-gold:hover {
+            background: #C19D2D;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-copy {
+            background: rgba(48, 209, 88, 0.15);
+            color: #30D158;
+            border: 1px solid rgba(48, 209, 88, 0.3);
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn-copy:hover {
+            background: rgba(48, 209, 88, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 144, 226, 0.15);
+        }
+
+        .card h3 {
+            color: #F8F8F8;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .plan-badge {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .plan-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(74, 144, 226, 0.15);
+            color: #4A90E2;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+        }
+
+        .plan-tag.premium {
+            background: rgba(212, 175, 55, 0.15);
+            color: #D4AF37;
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* TOKEN DISPLAY */
+        .token-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            gap: 15px;
+        }
+
+        #tokenValue {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 5px;
+            color: #4A90E2;
+            padding: 12px 20px;
+            background: rgba(74, 144, 226, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(74, 144, 226, 0.2);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .token-note {
+            color: #A0A0A0;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        /* RECEIPT HISTORY */
+        #receiptList {
+            margin-top: 15px;
+        }
+
+        .receipt-item {
+            padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 3px solid #4A90E2;
+        }
+
+        .receipt-item span {
+            font-size: 0.95rem;
+            color: #A0A0A0;
+        }
+
+        .receipt-item .receipt-token {
+            font-weight: 600;
+            color: #F8F8F8;
+        }
+
+        .receipt-item .receipt-amount {
+            color: #30D158;
+            font-weight: 600;
+        }
+
+        /* CUSTOMER VIEW */
+        .customer-view {
+            text-align: center;
+        }
+
+        .customer-view h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .customer-view p {
+            color: #A0A0A0;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        #tokenInput {
+            font-size: 1.8rem;
+            text-align: center;
+            letter-spacing: 8px;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(74, 144, 226, 0.2);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            color: #F8F8F8;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        #tokenInput:focus {
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        /* RECEIPT CARD */
+        .receipt-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 40px;
+            margin-top: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 144, 226, 0.15);
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            color: #A0A0A0;
+            font-size: 0.95rem;
+        }
+
+        .receipt-token {
+            font-weight: 500;
+            color: #4A90E2;
+        }
+
+        .receipt-date {
+            color: #A0A0A0;
+        }
+
+        .receipt-body h3 {
+            color: #F8F8F8;
+            margin: 20px 0 10px;
+            font-size: 1.2rem;
+        }
+
+        .receipt-amount {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #F8F8F8;
+            margin-bottom: 25px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .receipt-items {
+            background: rgba(74, 144, 226, 0.08);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            white-space: pre-line;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            border-left: 3px solid #4A90E2;
+        }
+
+        .receipt-description {
+            color: #A0A0A0;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #0F0F0F;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transform: translateY(30px);
+            transition: all 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.8rem;
+            color: #F8F8F8;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .gold-star {
+            color: #D4AF37;
+            font-size: 2rem;
+            margin: 5px 0;
+        }
+
+        .modal-desc {
+            color: #A0A0A0;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .modal-features {
+            text-align: left;
+            margin-bottom: 25px;
+            padding-left: 20px;
+        }
+
+        .modal-features li {
+            margin-bottom: 10px;
+            color: #A0A0A0;
+            font-size: 1rem;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .modal-features li:before {
+            content: "✓";
+            color: #30D158;
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+        }
+
+        .modal-price {
+            margin-bottom: 25px;
+        }
+
+        .price-tag {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #D4AF37;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: #A0A0A0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #F8F8F8;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footnote {
+            color: #777;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero, .dashboard, .customer-view {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .logo { font-size: 2rem; }
+            .title { font-size: 1.8rem; }
+            .role-cards { gap: 20px; }
+            .role-card { padding: 30px 20px; }
+            .role-title { font-size: 1.3rem; }
+            .receipt-amount { font-size: 2.2rem; }
+            .price-tag { font-size: 1.8rem; }
+            .modal-content { padding: 30px 20px; }
+            #tokenInput { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
     <!-- LANDING PAGE — Minimalist, Powerful -->
@@ -184,6 +798,475 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- SUPABASE LIBRARY -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Paystack -->
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+
+    <script>
+        // Wavy™ — Digital Receipt System (Elite Edition)
+        // Built for Okami Nalado — Digital Empire Architect
+
+        // CONFIGURATION — Replace with your keys
+        const SUPABASE_URL = 'https://xuaugiixuqrtomkgbwvw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh1YXVnaWl4dHFydG9ta2did3Z3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMzOTE2NDUsImV4cCI6MjA3ODk2NzY0NX0._uHk5cxdmFl2MIZetvwf_2y0Qw-ZJyAYE6yOG0wN78Y';
+        const PAYSTACK_PUBLIC_KEY = 'YOUR_PAYSTACK_PUBLIC_KEY'; // Replace with your Paystack key
+
+        // Initialize Supabase
+        const { createClient } = supabase;
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+
+        // DOM Elements
+        const elements = {
+            landingPage: document.getElementById('landingPage'),
+            merchantSection: document.getElementById('merchantSection'),
+            customerSection: document.getElementById('customerSection'),
+            merchantBtn: document.getElementById('merchantBtn'),
+            customerBtn: document.getElementById('customerBtn'),
+            backToLanding: document.getElementById('backToLanding'),
+            customerBack: document.getElementById('customerBack'),
+            authSection: document.getElementById('authSection'),
+            dashboard: document.getElementById('dashboard'),
+            loginForm: document.getElementById('loginForm'),
+            signupForm: document.getElementById('signupForm'),
+            loginEmail: document.getElementById('loginEmail'),
+            loginPassword: document.getElementById('loginPassword'),
+            signupName: document.getElementById('signupName'),
+            signupEmail: document.getElementById('signupEmail'),
+            signupPassword: document.getElementById('signupPassword'),
+            merchantName: document.getElementById('merchantName'),
+            planTag: document.getElementById('planTag'),
+            upgradeBtn: document.getElementById('upgradeBtn'),
+            createReceiptForm: document.getElementById('createReceiptForm'),
+            receiptItems: document.getElementById('receiptItems'),
+            receiptAmount: document.getElementById('receiptAmount'),
+            receiptDescription: document.getElementById('receiptDescription'),
+            receiptToken: document.getElementById('receiptToken'),
+            tokenValue: document.getElementById('tokenValue'),
+            copyToken: document.getElementById('copyToken'),
+            receiptHistory: document.getElementById('receiptHistory'),
+            receiptList: document.getElementById('receiptList'),
+            tokenForm: document.getElementById('tokenForm'),
+            tokenInput: document.getElementById('tokenInput'),
+            receiptDisplay: document.getElementById('receiptDisplay'),
+            displayToken: document.getElementById('displayToken'),
+            displayAmount: document.getElementById('displayAmount'),
+            displayDate: document.getElementById('displayDate'),
+            displayItems: document.getElementById('displayItems'),
+            displayDescription: document.getElementById('displayDescription'),
+            exportPdfBtn: document.getElementById('exportPdfBtn'),
+            paymentModal: document.getElementById('paymentModal'),
+            closePaymentModal: document.getElementById('closePaymentModal'),
+            paystackBtn: document.getElementById('paystackBtn'),
+            tabButtons: document.querySelectorAll('.tab-btn'),
+            authForms: document.querySelectorAll('.auth-form')
+        };
+
+        // INIT
+        function initApp() {
+            setupEventListeners();
+            checkUserSession();
+        }
+
+        // EVENT LISTENERS
+        function setupEventListeners() {
+            // Navigation
+            elements.merchantBtn.addEventListener('click', () => showSection('merchant'));
+            elements.customerBtn.addEventListener('click', () => showSection('customer'));
+            elements.backToLanding.addEventListener('click', () => showSection('landing'));
+            elements.customerBack.addEventListener('click', () => showSection('landing'));
+
+            // Auth
+            elements.loginForm.addEventListener('submit', handleLogin);
+            elements.signupForm.addEventListener('submit', handleSignup);
+            elements.tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => switchAuthTab(btn.dataset.tab));
+            });
+
+            // Receipt
+            elements.createReceiptForm.addEventListener('submit', handleCreateReceipt);
+            elements.copyToken.addEventListener('click', copyTokenToClipboard);
+            elements.upgradeBtn.addEventListener('click', openPaymentModal);
+
+            // Payment
+            elements.closePaymentModal.addEventListener('click', closePaymentModal);
+            elements.paystackBtn.addEventListener('click', handlePaystackPayment);
+
+            // Customer
+            elements.tokenForm.addEventListener('submit', handleTokenSubmit);
+            elements.exportPdfBtn.addEventListener('click', exportReceiptAsPDF);
+        }
+
+        // SHOW SECTION
+        function showSection(section) {
+            elements.landingPage.style.display = 'none';
+            elements.merchantSection.style.display = 'none';
+            elements.customerSection.style.display = 'none';
+
+            if (section === 'landing') elements.landingPage.style.display = 'block';
+            if (section === 'merchant') elements.merchantSection.style.display = 'block';
+            if (section === 'customer') elements.customerSection.style.display = 'block';
+
+            // Reset forms
+            if (section === 'merchant') {
+                elements.authSection.style.display = 'block';
+                elements.dashboard.style.display = 'none';
+                elements.receiptToken.style.display = 'none';
+                elements.receiptHistory.style.display = 'none';
+            }
+
+            // Animate in
+            document.querySelectorAll('.hero, .dashboard, .customer-view').forEach(el => {
+                el.style.animation = 'none';
+                void el.offsetWidth;
+                el.style.animation = 'fadeInUp 0.6s ease-out forwards';
+            });
+        }
+
+        // SWITCH AUTH TAB
+        function switchAuthTab(tab) {
+            elements.tabButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            elements.authForms.forEach(form => {
+                form.style.display = form.id === `${tab}Form` ? 'block' : 'none';
+            });
+        }
+
+        // LOGIN
+        async function handleLogin(e) {
+            e.preventDefault();
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: elements.loginEmail.value,
+                    password: elements.loginPassword.value
+                });
+                
+                if (error) {
+                    console.error('Login error:', error);
+                    alert('Login failed: ' + error.message);
+                    return;
+                }
+                
+                currentUser = data.user;
+                await loadMerchantDashboard();
+                elements.authSection.style.display = 'none';
+                elements.dashboard.style.display = 'block';
+                elements.loginForm.reset();
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed: ' + error.message);
+            }
+        }
+
+        // SIGNUP
+        async function handleSignup(e) {
+            e.preventDefault();
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: elements.signupEmail.value,
+                    password: elements.signupPassword.value,
+                    options: {
+                         {
+                            name: elements.signupName.value,
+                            role: 'merchant',
+                            plan: 'free'
+                        }
+                    }
+                });
+                
+                if (error) {
+                    console.error('Signup error:', error);
+                    alert('Signup failed: ' + error.message);
+                    return;
+                }
+                
+                if (data.session) {
+                    // User is logged in automatically
+                    currentUser = data.user;
+                    await loadMerchantDashboard();
+                    elements.authSection.style.display = 'none';
+                    elements.dashboard.style.display = 'block';
+                    elements.signupForm.reset();
+                } else {
+                    alert('Please check your email to confirm your account');
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Signup failed: ' + error.message);
+            }
+        }
+
+        // LOAD DASHBOARD
+        async function loadMerchantDashboard() {
+            try {
+                const {  user, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+                    
+                if (error) {
+                    console.error('Dashboard load error:', error);
+                    // If user doesn't exist in our table yet, create it
+                    if (error.code === 'PGRST116') {
+                        await supabase.from('users').insert([{
+                            id: currentUser.id,
+                            name: currentUser.email.split('@')[0], // Use email prefix as name if not provided
+                            email: currentUser.email,
+                            role: 'merchant',
+                            plan: 'free'
+                        }]);
+                        await loadMerchantDashboard(); // Retry
+                    }
+                    return;
+                }
+
+                elements.merchantName.textContent = user.name;
+                elements.planTag.textContent = user.plan === 'premium' ? 'Premium Plan' : 'Free Plan';
+                elements.planTag.className = 'plan-tag ' + (user.plan === 'premium' ? 'premium' : '');
+                elements.receiptHistory.style.display = user.plan === 'premium' ? 'block' : 'none';
+                if (user.plan === 'premium') await loadReceiptHistory();
+            } catch (error) {
+                console.error('Dashboard error:', error);
+            }
+        }
+
+        // LOAD RECEIPT HISTORY
+        async function loadReceiptHistory() {
+            try {
+                const {  receipts, error } = await supabase
+                    .from('receipts')
+                    .select('*')
+                    .eq('merchant_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+                    
+                if (error) {
+                    console.error('History load error:', error);
+                    return;
+                }
+
+                elements.receiptList.innerHTML = receipts.map(r => `
+                    <div class="receipt-item">
+                        <span class="receipt-token">${r.token}</span>
+                        <span class="receipt-amount">₦${r.amount}</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('History error:', error);
+            }
+        }
+
+        // GENERATE TOKEN
+        function generateUniqueToken() {
+            return Array(6).fill(0).map(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('');
+        }
+
+        // CREATE RECEIPT
+        async function handleCreateReceipt(e) {
+            e.preventDefault();
+            const items = elements.receiptItems.value.trim();
+            const amount = parseFloat(elements.receiptAmount.value);
+            const description = elements.receiptDescription.value.trim();
+
+            if (!items || !amount) {
+                alert('All fields required.');
+                return;
+            }
+
+            try {
+                const token = generateUniqueToken();
+
+                const { data, error } = await supabase
+                    .from('receipts')
+                    .insert([{
+                        merchant_id: currentUser.id,
+                        token,
+                        items,
+                        amount,
+                        description: description || null
+                    }]);
+
+                if (error) {
+                    console.error('Receipt creation error:', error);
+                    alert('Failed to save receipt: ' + error.message);
+                    return;
+                }
+
+                elements.tokenValue.textContent = token;
+                elements.receiptToken.style.display = 'block';
+                elements.createReceiptForm.reset();
+
+                if (elements.planTag.classList.contains('premium')) {
+                    await loadReceiptHistory();
+                }
+            } catch (error) {
+                console.error('Receipt creation error:', error);
+                alert('Failed to save receipt: ' + error.message);
+            }
+        }
+
+        // COPY TOKEN
+        function copyTokenToClipboard() {
+            navigator.clipboard.writeText(elements.tokenValue.textContent).then(() => {
+                alert('Token copied to clipboard!');
+            });
+        }
+
+        // OPEN PAYSTACK MODAL
+        function openPaymentModal() {
+            elements.paymentModal.classList.add('active');
+        }
+
+        // CLOSE PAYSTACK MODAL
+        function closePaymentModal() {
+            elements.paymentModal.classList.remove('active');
+        }
+
+        // PAYSTACK PAYMENT
+        function handlePaystackPayment() {
+            if (!currentUser) {
+                alert('Please login first.');
+                return;
+            }
+
+            const handler = PaystackPop.setup({
+                key: PAYSTACK_PUBLIC_KEY,
+                email: currentUser.email,
+                amount: 500000, // 5,000 NGN
+                currency: 'NGN',
+                ref: `wavy-upgrade-${Date.now()}-${currentUser.id}`,
+                meta {
+                    custom_fields: [
+                        { display_name: "User ID", variable_name: "user_id", value: currentUser.id },
+                        { display_name: "Upgrade Type", variable_name: "upgrade_type", value: "premium" }
+                    ]
+                },
+                callback: async (response) => {
+                    try {
+                        const { error } = await supabase
+                            .from('users')
+                            .update({ plan: 'premium', last_payment_ref: response.reference })
+                            .eq('id', currentUser.id);
+
+                        if (error) {
+                            console.error('Upgrade error:', error);
+                            alert('Payment confirmed, but account upgrade failed. Contact support.');
+                            return;
+                        }
+
+                        elements.planTag.textContent = 'Premium Plan';
+                        elements.planTag.className = 'plan-tag premium';
+                        elements.receiptHistory.style.display = 'block';
+                        await loadReceiptHistory();
+                        closePaymentModal();
+                        alert('✅ You are now a Premium Merchant. Welcome to the elite tier.');
+                    } catch (error) {
+                        console.error('Upgrade error:', error);
+                        alert('Payment confirmed, but account upgrade failed. Contact support.');
+                    }
+                },
+                onClose: () => console.log('Payment window closed')
+            });
+
+            handler.openIframe();
+        }
+
+        // CUSTOMER VIEW
+        async function handleTokenSubmit(e) {
+            e.preventDefault();
+            const token = elements.tokenInput.value.trim().toUpperCase();
+
+            if (token.length !== 6) {
+                alert('Invalid token. Must be 6 characters.');
+                return;
+            }
+
+            try {
+                const {  receipt, error } = await supabase
+                    .from('receipts')
+                    .select('*')
+                    .eq('token', token)
+                    .single();
+
+                if (error || !receipt) {
+                    console.error('Token lookup error:', error);
+                    alert('Receipt not found. Please verify the token.');
+                    return;
+                }
+
+                elements.displayToken.textContent = receipt.token;
+                elements.displayAmount.textContent = receipt.amount;
+                elements.displayDate.textContent = new Date(receipt.created_at).toLocaleString();
+                elements.displayItems.textContent = receipt.items;
+                elements.displayDescription.innerHTML = receipt.description ? `<p><strong>Description:</strong> ${receipt.description}</p>` : '';
+
+                elements.tokenForm.style.display = 'none';
+                elements.receiptDisplay.style.display = 'block';
+            } catch (error) {
+                console.error('Token lookup error:', error);
+                alert('Receipt not found. Please verify the token.');
+            }
+        }
+
+        // EXPORT PDF
+        async function exportReceiptAsPDF() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const receiptContent = document.getElementById('receiptContent');
+
+                const canvas = await html2canvas(receiptContent, {
+                    backgroundColor: '#0F0F0F',
+                    scale: 2
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                pdf.save(`receipt-${elements.displayToken.textContent}.pdf`);
+            } catch (error) {
+                console.error('PDF export error:', error);
+                alert('Failed to export PDF: ' + error.message);
+            }
+        }
+
+        // CHECK SESSION
+        async function checkUserSession() {
+            try {
+                const {  { session } } = await supabase.auth.getSession();
+                if (session) {
+                    currentUser = session.user;
+                    await loadMerchantDashboard();
+                    showSection('merchant');
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+            }
+        }
+
+        // INIT ON LOAD
+        document.addEventListener('DOMContentLoaded', initApp);
+
+        // AUTH STATE LISTENER
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_OUT') {
+                currentUser = null;
+                showSection('landing');
+            }
+        });
+
+        // Add error handling for the entire app
+        window.addEventListener('error', (e) => {
+            console.error('Global error:', e.error);
+        });
+    </script>
 </body>
 </html>
